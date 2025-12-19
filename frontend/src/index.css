@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+@theme {
+  --spacing-barra-menu-altura: 50px;
+  --spacing-panel-menu-ancho: 230px;
+  --spacing-barra-inventario-altura: 50px;
+  --spacing-encabezado-caja-altura: 40px;
+  --spacing-resumen-altura: 150px;
+  --spacing-nota-ancho: 30vw;
+}
+
+/* estilos generales */
+@layer base {
+  h1 {
+    @apply text-2xl font-bold;
+  }
+
+  button {
+    @apply cursor-pointer rounded-lg;
+  }
+
+  select {
+    @apply flex items-center rounded-lg border-2 bg-zinc-300 p-2 hover:shadow-lg;
+  }
+
+  option {
+    @apply bg-slate-200 text-black;
+  }
+
+  fieldset {
+    @apply flex flex-col;
+  }
+
+  em {
+    @apply bg-red-200;
+  }
+
+  hr {
+    @apply mb-4;
+  }
+
+  input {
+    @apply focus:outline-none;
+  }
+
+  dl {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2;
+  }
+
+  dt {
+    @apply font-thin;
+  }
+
+  dd {
+    @apply font-medium;
+  }
+}
+
+/* utilidades */
+@layer utilities {
+  .centrar {
+    @apply flex min-h-screen flex-col items-center justify-center;
+  }
+  .tarjeta {
+    @apply rounded-md border border-gray-200 shadow-sm;
+  }
+  .titulo-contenido {
+    @apply underline sm:no-underline;
+  }
+  .linea {
+    @apply border-b-2 border-b-gray-200 last:border-0;
+  }
+  .cuadricula {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5;
+  }
+}
+
+/* clases */
+@layer components {
+  .prueba {
+    @apply rounded-md border border-gray-200 shadow-sm;
+  }
+  /* menu */
+  .contenido-menu {
+    @apply sm:ml-panel-menu-ancho p-2 sm:min-h-screen sm:p-4;
+  }
+
+  .contenido-inventario {
+    @apply min-h-[calc(100vh-var(--spacing-barra-inventario-altura))] bg-stone-50 px-4 pt-4;
+  }
+
+  .inputForm {
+    @apply mb-4 rounded-lg bg-zinc-100 p-1 pl-2 focus:ring-2 focus:ring-sky-600 focus:outline-none disabled:cursor-not-allowed;
+  }
+
+  .botonNeutral {
+    @apply w-full rounded-lg border-2 bg-indigo-200 p-2 hover:shadow-lg;
+  }
+
+  .botonPeligro {
+    @apply rounded-lg border-2 border-black bg-red-400 p-2 text-white hover:shadow-lg;
+  }
+
+  .botonPeligro:disabled {
+    @apply cursor-not-allowed opacity-20;
+  }
+
+  .botonNeutral:disabled {
+    @apply cursor-not-allowed opacity-20;
+  }
+
+  .encabezado-tabla-producto-modal {
+    @apply border-2 border-gray-200 font-medium;
+  }
+
+  .cuerpo-tabla-producto-moda {
+    @apply border-2 border-gray-200;
+  }
+  .encabezado-tabla-caja-modal {
+    @apply border-2 border-gray-200 font-medium;
+  }
+
+  .cuerpo-tabla-caja-moda {
+    @apply border-2 border-gray-200;
+  }
+
+  .carta-resumen-producto-modal {
+    @apply flex size-50 flex-col items-center justify-center rounded-md border-2 border-gray-200 bg-slate-50 shadow-lg;
+  }
+
+  .link-inventario-activo {
+    @apply font-extrabold underline underline-offset-8;
+  }
+
+  /* dashboar */
+  .dashboard-tarjeta-titulo {
+    @apply text-base font-light;
+  }
+}

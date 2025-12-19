@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("CADENA_CONEXION")
+}
+
+model clientes {
+  NIT       String   @id @db.VarChar(80)
+  Nombres   String   @db.VarChar(80)
+  Apellidos String   @db.VarChar(80)
+  ventas    ventas[]
+}
+
+model compras {
+  CompraID       Int              @id @default(autoincrement())
+  EmpleadoID     Int
+  FechaHora      DateTime         @db.DateTime(0)
+  Total          Decimal          @db.Decimal(10, 2)
+  Notas          String?          @db.VarChar(200)
+  empleados      empleados        @relation(fields: [EmpleadoID], references: [EmpleadoID], onDelete: NoAction, onUpdate: NoAction, map: "fkComprasEmpleadoID")
+  detallescompra detallescompra[]
+
+  @@index([EmpleadoID], map: "fkComprasEmpleadoID_idx")
+}
+
+model detallescompra {
+  DetalleCompraID     Int                 @id @default(autoincrement())
+  CompraID            Int
+  PaqueteID           Int
+  PrecioCompra        Decimal             @db.Decimal(10, 2)
+  Cantidad            Int
+  Subtotal            Decimal             @db.Decimal(10, 2)
+  compras             compras             @relation(fields: [CompraID], references: [CompraID], onDelete: NoAction, onUpdate: NoAction, map: "fkDetallesCompraCompraID")
+  proveedorespaquetes proveedorespaquetes @relation(fields: [PaqueteID], references: [ProveedorPaqueteID], onDelete: NoAction, onUpdate: NoAction, map: "fkDetallesCompraPaqueteID")
+
+  @@index([CompraID], map: "fkDetallesCompraCompraID_idx")
+  @@index([PaqueteID], map: "fkDetallesCompraPaqueteID_idx")
+}
+
+model detallesventa {
+  DetalleVentaID      Int                  @id @default(autoincrement())
+  VentaID             Int
+  PaqueteID           Int?
+  ProductoID          Int?
+  PrecioVenta         Decimal              @db.Decimal(10, 2)
+  Subtotal            Decimal              @db.Decimal(10, 2)
+  Cantidad            Int
+  Utilidad            Decimal              @db.Decimal(10, 2)
+  proveedorespaquetes proveedorespaquetes? @relation(fields: [PaqueteID], references: [ProveedorPaqueteID], onDelete: NoAction, onUpdate: NoAction, map: "fkDetallesVentaPaqueteID")
+  productos           productos?           @relation(fields: [ProductoID], references: [ProductoID], onDelete: NoAction, onUpdate: NoAction, map: "fkDetallesVentaProductoID")
+  ventas              ventas               @relation(fields: [VentaID], references: [VentaID], onDelete: NoAction, onUpdate: NoAction, map: "fkDetallesVentaVentaID")
+
+  @@index([PaqueteID], map: "fkDetallesVentaPaqueteID_idx")
+  @@index([ProductoID], map: "fkDetallesVentaProductoID_idx")
+  @@index([VentaID], map: "fkDetallesVentaVentaID_idx")
+}
+
+model empleados {
+  EmpleadoID      Int        @id @default(autoincrement())
+  RolID           Int
+  Nombres         String     @db.VarChar(150)
+  Apellidos       String     @db.VarChar(150)
+  Salario         Decimal    @db.Decimal(10, 2)
+  Celular         String?    @unique(map: "Celular_UNIQUE") @db.VarChar(45)
+  Genero          String     @db.VarChar(45)
+  FechaNacimiento DateTime?  @db.Date
+  FechaContratado DateTime   @db.Date
+  FechaFinLabores DateTime?  @db.Date
+  Imagen          String?    @default("usuario-default.png") @db.VarChar(300)
+  Usuario         String     @unique(map: "Usuario_UNIQUE") @db.VarChar(45)
+  Clave           String     @db.VarChar(300)
+  VersionToken    Int?       @default(1)
+  FechaCreacion   DateTime   @db.DateTime(0)
+  compras         compras[]
+  roles           roles      @relation(fields: [RolID], references: [RolID], onDelete: NoAction, onUpdate: NoAction, map: "fkEmpleadosRolID")
+  sesiones        sesiones[]
+  ventas          ventas[]
+
+  @@index([RolID], map: "fkEmpleadosRolID_idx")
+}
+
+model paquetes {
+  PaqueteID           Int                   @id @default(autoincrement())
+  ProductoID          Int
+  Nombre              String                @db.VarChar(150)
+  Descripcion         String?               @db.VarChar(300)
+  UnidadesTotales     Int
+  PrecioVenta         Decimal               @db.Decimal(10, 2)
+  MedidaBase          Int?
+  productos           productos             @relation(fields: [ProductoID], references: [ProductoID], onDelete: NoAction, onUpdate: NoAction, map: "fkMercaderiasProductoID")
+  paquetes            paquetes?             @relation("paquetesTopaquetes", fields: [MedidaBase], references: [PaqueteID], onDelete: NoAction, onUpdate: NoAction, map: "fkPaquetePaqueteID")
+  other_paquetes      paquetes[]            @relation("paquetesTopaquetes")
+  proveedorespaquetes proveedorespaquetes[]
+
+  @@index([ProductoID], map: "fkMercaderiasProductoID_idx")
+  @@index([MedidaBase], map: "fkPaquetePaqueteID_idx")
+}
+
+model productos {
+  ProductoID            Int             @id @default(autoincrement())
+  Nombre                String          @unique(map: "Nombre_UNIQUE") @db.VarChar(300)
+  Descripcion           String?         @db.VarChar(200)
+  PrecioVenta           Decimal         @db.Decimal(10, 2)
+  Cantidad              Int?            @default(0)
+  Imagen                String?         @default("producto-default.png") @db.VarChar(300)
+  FechaHoraModificacion DateTime        @db.DateTime(0)
+  detallesventa         detallesventa[]
+  paquetes              paquetes[]
+}
+
+model proveedores {
+  ProveedorID         Int                   @id @default(autoincrement())
+  Nombre              String                @unique(map: "Nombre_UNIQUE") @db.VarChar(300)
+  Celular             String                @unique(map: "Celular_UNIQUE") @db.VarChar(45)
+  Notas               String?               @db.VarChar(45)
+  proveedorespaquetes proveedorespaquetes[]
+}
+
+model proveedorespaquetes {
+  ProveedorPaqueteID Int              @id @default(autoincrement())
+  ProveedorID        Int
+  PaqueteID          Int
+  PrecioCompra       Decimal          @db.Decimal(10, 2)
+  Notas              String?          @db.VarChar(150)
+  detallescompra     detallescompra[]
+  detallesventa      detallesventa[]
+  paquetes           paquetes         @relation(fields: [PaqueteID], references: [PaqueteID], onDelete: NoAction, onUpdate: NoAction, map: "fkPaquetesIDPaquetes")
+  proveedores        proveedores      @relation(fields: [ProveedorID], references: [ProveedorID], onDelete: NoAction, onUpdate: NoAction, map: "fkProveedoresProveedorID")
+
+  @@index([PaqueteID], map: "fkPaquetesIDPaquetes_idx")
+  @@index([ProveedorID], map: "fkProveedoresProveedorID_idx")
+}
+
+model roles {
+  RolID       Int         @id @default(autoincrement())
+  Nombre      String      @unique(map: "Nombre_UNIQUE") @db.VarChar(80)
+  Descripcion String?     @db.VarChar(150)
+  empleados   empleados[]
+}
+
+model sesiones {
+  SesionID        Int       @id @default(autoincrement())
+  EmpleadoID      Int
+  TokenRefresco   String    @unique(map: "TokenRefresco_UNIQUE") @db.VarChar(512)
+  FechaCreacion   DateTime  @db.DateTime(0)
+  FechaExpiracion DateTime  @db.DateTime(0)
+  Activo          Int?      @default(1) @db.TinyInt
+  Plataforma      String    @db.VarChar(300)
+  empleados       empleados @relation(fields: [EmpleadoID], references: [EmpleadoID], onDelete: NoAction, onUpdate: NoAction, map: "fkSesionesEmpleadoID")
+
+  @@index([EmpleadoID], map: "fkSesionesEmpleadoID_idx")
+}
+
+model ventas {
+  VentaID       Int             @id @default(autoincrement())
+  EmpleadoID    Int
+  FechaHora     DateTime        @db.DateTime(0)
+  NIT           String?         @db.VarChar(80)
+  Total         Decimal         @db.Decimal(10, 2)
+  MontoRecibido Decimal         @db.Decimal(10, 2)
+  Vuelto        Decimal         @db.Decimal(10, 2)
+  Notas         String?         @db.VarChar(200)
+  detallesventa detallesventa[]
+  clientes      clientes?       @relation(fields: [NIT], references: [NIT], onDelete: NoAction, onUpdate: NoAction, map: "fkClientesNIT")
+  empleados     empleados       @relation(fields: [EmpleadoID], references: [EmpleadoID], onDelete: NoAction, onUpdate: NoAction, map: "fkVentasEmpleadoID")
+
+  @@index([NIT], map: "fkClientesNIT_idx")
+  @@index([EmpleadoID], map: "fkVentasEmpleadoID_idx")
+}
+
+model tarjetasregalo {
+  TarjetaID       Int       @id
+  MontoInicial    Decimal   @db.Decimal(10, 2)
+  Moneda          String?   @db.VarChar(300)
+  FechaEmision    DateTime? @db.DateTime(0)
+  FechaExpiracion DateTime? @db.DateTime(0)
+  Estado          String?   @db.VarChar(300)
+  EmpleadoID      Int
+  OtorgadoPor     Int
+}
