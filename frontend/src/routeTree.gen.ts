@@ -8,6 +8,8 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PruebaRouteImport } from './routes/prueba'
 import { Route as LoginRouteImport } from './routes/login'
@@ -31,6 +33,13 @@ import { Route as InventarioInvProveedoresEditarIDRouteImport } from './routes/i
 import { Route as InventarioInvProductosEditarIDRouteImport } from './routes/inventario/_inv.productos/editar.$ID'
 import { Route as InventarioInvPaquetesEditarIDRouteImport } from './routes/inventario/_inv.paquetes/editar.$ID'
 
+const InventarioRouteImport = createFileRoute('/inventario')()
+
+const InventarioRoute = InventarioRouteImport.update({
+  id: '/inventario',
+  path: '/inventario',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PruebaRoute = PruebaRouteImport.update({
   id: '/prueba',
   path: '/prueba',
@@ -168,6 +177,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/prueba': typeof PruebaRoute
+  '/inventario': typeof InventarioInvIndexRoute
   '/': typeof MenuIndexRoute
   '/caja': typeof CajaIndexRoute
   '/empleados/$ID': typeof MenuEmpleadosIDRoute
@@ -175,7 +185,6 @@ export interface FileRoutesByTo {
   '/historial/compras': typeof MenuHistorialComprasRoute
   '/historial/ventas': typeof MenuHistorialVentasRoute
   '/empleados': typeof MenuEmpleadosIndexRoute
-  '/inventario': typeof InventarioInvIndexRoute
   '/empleados/editar/$ID': typeof MenuEmpleadosEditarIDRoute
   '/inventario/paquetes/crear': typeof InventarioInvPaquetesCrearRoute
   '/inventario/productos/crear': typeof InventarioInvProductosCrearRoute
@@ -191,6 +200,7 @@ export interface FileRoutesById {
   '/_menu': typeof MenuRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/prueba': typeof PruebaRoute
+  '/inventario': typeof InventarioRouteWithChildren
   '/inventario/_inv': typeof InventarioInvRouteWithChildren
   '/_menu/': typeof MenuIndexRoute
   '/caja/': typeof CajaIndexRoute
@@ -237,6 +247,7 @@ export interface FileRouteTypes {
   to:
     | '/login'
     | '/prueba'
+    | '/inventario'
     | '/'
     | '/caja'
     | '/empleados/$ID'
@@ -244,7 +255,6 @@ export interface FileRouteTypes {
     | '/historial/compras'
     | '/historial/ventas'
     | '/empleados'
-    | '/inventario'
     | '/empleados/editar/$ID'
     | '/inventario/paquetes/crear'
     | '/inventario/productos/crear'
@@ -259,6 +269,7 @@ export interface FileRouteTypes {
     | '/_menu'
     | '/login'
     | '/prueba'
+    | '/inventario'
     | '/inventario/_inv'
     | '/_menu/'
     | '/caja/'
@@ -283,11 +294,19 @@ export interface RootRouteChildren {
   MenuRouteRoute: typeof MenuRouteRouteWithChildren
   LoginRoute: typeof LoginRoute
   PruebaRoute: typeof PruebaRoute
+  InventarioRoute: typeof InventarioRouteWithChildren
   CajaIndexRoute: typeof CajaIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/inventario': {
+      id: '/inventario'
+      path: '/inventario'
+      fullPath: '/inventario'
+      preLoaderRoute: typeof InventarioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/prueba': {
       id: '/prueba'
       path: '/prueba'
@@ -325,7 +344,7 @@ declare module '@tanstack/react-router' {
     }
     '/inventario/_inv': {
       id: '/inventario/_inv'
-      path: ''
+      path: '/inventario'
       fullPath: '/inventario'
       preLoaderRoute: typeof InventarioInvRouteImport
       parentRoute: typeof InventarioRoute
@@ -462,10 +481,51 @@ const MenuRouteRouteWithChildren = MenuRouteRoute._addFileChildren(
   MenuRouteRouteChildren,
 )
 
+interface InventarioInvRouteChildren {
+  InventarioInvIndexRoute: typeof InventarioInvIndexRoute
+  InventarioInvPaquetesCrearRoute: typeof InventarioInvPaquetesCrearRoute
+  InventarioInvProductosCrearRoute: typeof InventarioInvProductosCrearRoute
+  InventarioInvProveedoresCrearRoute: typeof InventarioInvProveedoresCrearRoute
+  InventarioInvProductosIndexRoute: typeof InventarioInvProductosIndexRoute
+  InventarioInvProveedoresIndexRoute: typeof InventarioInvProveedoresIndexRoute
+  InventarioInvPaquetesEditarIDRoute: typeof InventarioInvPaquetesEditarIDRoute
+  InventarioInvProductosEditarIDRoute: typeof InventarioInvProductosEditarIDRoute
+  InventarioInvProveedoresEditarIDRoute: typeof InventarioInvProveedoresEditarIDRoute
+}
+
+const InventarioInvRouteChildren: InventarioInvRouteChildren = {
+  InventarioInvIndexRoute: InventarioInvIndexRoute,
+  InventarioInvPaquetesCrearRoute: InventarioInvPaquetesCrearRoute,
+  InventarioInvProductosCrearRoute: InventarioInvProductosCrearRoute,
+  InventarioInvProveedoresCrearRoute: InventarioInvProveedoresCrearRoute,
+  InventarioInvProductosIndexRoute: InventarioInvProductosIndexRoute,
+  InventarioInvProveedoresIndexRoute: InventarioInvProveedoresIndexRoute,
+  InventarioInvPaquetesEditarIDRoute: InventarioInvPaquetesEditarIDRoute,
+  InventarioInvProductosEditarIDRoute: InventarioInvProductosEditarIDRoute,
+  InventarioInvProveedoresEditarIDRoute: InventarioInvProveedoresEditarIDRoute,
+}
+
+const InventarioInvRouteWithChildren = InventarioInvRoute._addFileChildren(
+  InventarioInvRouteChildren,
+)
+
+interface InventarioRouteChildren {
+  InventarioInvRoute: typeof InventarioInvRouteWithChildren
+}
+
+const InventarioRouteChildren: InventarioRouteChildren = {
+  InventarioInvRoute: InventarioInvRouteWithChildren,
+}
+
+const InventarioRouteWithChildren = InventarioRoute._addFileChildren(
+  InventarioRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   MenuRouteRoute: MenuRouteRouteWithChildren,
   LoginRoute: LoginRoute,
   PruebaRoute: PruebaRoute,
+  InventarioRoute: InventarioRouteWithChildren,
   CajaIndexRoute: CajaIndexRoute,
 }
 export const routeTree = rootRouteImport

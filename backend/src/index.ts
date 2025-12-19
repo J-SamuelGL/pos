@@ -76,5 +76,5 @@ app.use(manejadorError);
 
 app.listen(3000, async () => {
   await configuracionInicial();
-  console.log("📡 http://localhost:3000/api");
+  console.log("http://localhost:3000/api");
 });

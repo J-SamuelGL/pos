@@ -11,10 +11,10 @@ const configuracionInicial = async () => {
     if (!usuario) {
       // chequear si las variables de configuracion inicial existen
       if (!process.env.NOMBRES || !process.env.ROLID) {
-        console.log("⚠️ El admin no está configurado en el .env!");
+        console.log("El admin no está configurado en el .env!");
         return;
       }
-      console.log("⌛ Insertando seed...");
+      console.log("Insertando seed...");
       // crear los roles
       await prisma.roles.createMany({
         data: roles,
@@ -47,7 +47,7 @@ const configuracionInicial = async () => {
         data: empleados,
       });
 
-      console.log("✅ Configuración terminada!");
+      console.log("Configuración terminada!");
     }
     return;
   } catch (e) {
